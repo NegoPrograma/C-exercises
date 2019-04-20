@@ -10,7 +10,7 @@ typedef struct pilha{
 }Pilha;
 
 Pilha* criaPilha(){
-    Pilha* pilha;
+    Pilha* pilha = malloc(sizeof(Pilha));
     pilha->top = -1;
     return pilha;
 }
@@ -79,14 +79,14 @@ int stacktop(Pilha* pilha){
 int main(void){
 
     Pilha* stack = criaPilha();
-    for(int i = -1; i < MAX; i++){
+    for(int i = 0; i < MAX; i++){
         push(stack,i);
     }
     stacktop(stack);
     pop(stack);
     stacktop(stack);
 
-
+    free(stack);
 
     return 0;
 }
