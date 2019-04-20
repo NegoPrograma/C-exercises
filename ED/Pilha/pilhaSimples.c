@@ -37,7 +37,7 @@ int full(Pilha* pilha){
 //removendo um elemento da pilha
 int pop(Pilha* pilha){
     if(empty(pilha)){
-        printf("pilha vazia!");
+        printf("pilha vazia!\n");
         return -1;
     }
     else{
@@ -54,7 +54,7 @@ void push(Pilha* pilha, int item){
         // então em teoria nós poderíamos sempre por um elemento novo,
         // porém a gente ta usando aqui uma gambiarra de array estático, 
         //por isso é necessário a checagem de slot final antes de adicionar
-        printf("pilha cheia! Item não adicionado.");
+        printf("pilha cheia!\n Item não adicionado.\n");
     }
     else{
         pilha->top++;
@@ -65,11 +65,11 @@ void push(Pilha* pilha, int item){
 //pegando o topo da lista sem remover o mesmo dela.
 int stacktop(Pilha* pilha){
     if(empty(pilha)){
-        printf("pilha vazia!");
+        printf("pilha vazia!\n");
         return -1;
     }
     else{
-        printf("%d é o item no topo da lista atualmente", pilha->elementos[pilha->top]);
+        printf("%d é o item no topo da lista atualmente\n", pilha->elementos[pilha->top]);
         return pilha->elementos[pilha->top];
 
     }
@@ -82,10 +82,7 @@ int main(void){
     for(int i = 0; i < MAX; i++){
         push(stack,i);
     }
-    stacktop(stack);
-    pop(stack);
-    stacktop(stack);
-
+    push(stack,9);
     free(stack);
 
     return 0;
