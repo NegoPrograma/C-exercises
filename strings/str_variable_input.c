@@ -5,8 +5,6 @@ void input(char palavra[]);
 int main(){
 
     char palavra[100];
-    char caractere;
-    int i = 0;
 
     input(palavra);
     printf("%s",palavra);
