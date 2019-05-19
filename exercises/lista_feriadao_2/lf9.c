@@ -13,16 +13,17 @@ int main(){
 
 int n;
 scanf("%d",&n);
+
 int i,j;
 while(n > 0){
-for(i = 0; i < n;i++){
-    for(j = 0;j < n;j++)
-        printf("%d \t",(i+1)*(j+1));
+    for(i = 0; i < n;i++){
+        for(j = 0;j < n;j++)
+            printf("%d \t",(i+1)*(j+1));
+        printf("\n");
+    }
     printf("\n");
-}
-printf("\n");
-scanf("%d",&n);
-printf("\n");
+    scanf("%d",&n);
+    printf("\n");
 
 }
 
