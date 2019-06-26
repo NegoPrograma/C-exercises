@@ -35,7 +35,7 @@ int main(void){
     List* L =(List*) malloc(sizeof(List));
     L = NULL;
     
-    for( i=0;i > 10; i++){
+    for( i=0;i < 10; i++){
         L = insertElem(L,i);
         printf("%d",L->info);  
     }
