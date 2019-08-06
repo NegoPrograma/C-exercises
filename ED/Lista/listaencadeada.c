@@ -15,43 +15,67 @@ Lista* insereInicioLista(int elem, Lista* L){
 
 int busca(Lista* L, int elem, Lista** pre){
 	Lista* aux = L;
+	*pre = NULL;
 	while(aux != NULL && elem > aux->info){
 		*pre = aux;
 		aux = aux->prox;
 	};
-	printf("%d\n",aux->info);
-	if(aux != NULL)
-		return 1;
+	if(aux != NULL){
+		if(aux->info == elem)
+			return 1;
+		return 0;			
+	}
 	return 0;
+};
+
+Lista* insereElem(Lista* L, int elem){
+	Lista* aux, *pre;
+	aux = L;
+	if(busca(aux,elem,&pre)){
+		printf("Elemento não adicionado pois já está presente na lista.");
+	}
+	else{
+		if(pre == NULL){
+			Lista* novoElem = (Lista*) malloc(sizeof(Lista));
+			novoElem->info = elem;
+			novoElem->prox = L;
+			L = novoElem;
+		}else{
+			printf("pre: %d\n", pre->info);
+			Lista* novoElem = (Lista*) malloc(sizeof(Lista));
+			novoElem->info = elem;
+			novoElem->prox = pre->prox;
+			pre->prox = novoElem;
+		};
+	return L;
+	};
 };
 
 
 void printLista(Lista* L){
 	Lista* aux = L;
 	while(aux != NULL){
-		printf("%d\n",aux->info );
+		printf("Elemento atual:%d  Próximo endereço: %d\n",aux->info, aux->prox);
 		aux = aux->prox;
 	}
 };
 
-Lista* insereElem(int elem, Lista* L){
-	Lista* aux = L;
-	Lista* pre;
-	if(busca(aux,elem,&pre)){
-	Lista* proximoProximo = pre->prox;
-	Lista* novoElem = (Lista*) malloc(sizeof(Lista));
-	novoElem->info = elem;
-	pre->prox = novoElem;
-	printf("%d\n",pre->info);
-	novoElem->prox = proximoProximo;
-	return L;
-	}else{
-		Lista* novoElem = (Lista*) malloc(sizeof(Lista));
-		novoElem->info = elem;
-		novoElem->prox = NULL;
-		pre->prox = novoElem;
+Lista* removeElem(Lista*L,int elem){
+	Lista *lixo,*pre;
+	if(busca(L,elem,&pre)){
+		if(pre != NULL){
+			lixo = pre->prox;
+			pre->prox = lixo->prox;
+			}
+		else{
+			lixo = L;
+			L = L->prox;
+		}
 	}
+	free(lixo);
+	return L;
 };
+
 
 
 int main(int argc, char const *argv[]){
@@ -62,9 +86,15 @@ int main(int argc, char const *argv[]){
 		L = insereInicioLista(i,L);
 	}
 
-	L = insereElem(8,L);
-	L = insereElem(11,L);
-	printf("---------------------------------\n");
+printf("---------------------------------\n");
+	L = insereElem(L,0);
+    L = insereElem(L, 16);
 	printLista(L);
+	printf("%d",L->info);
+	L = removeElem(L,0);
+	printLista(L);
+
+
+	
 	return 0;
 }

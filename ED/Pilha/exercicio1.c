@@ -33,11 +33,11 @@ verificar se determinada string x C y corresponde aos parâmetros:
 void leitura(Pilha* pilha){
     char palavra[100];
     scanf("%s",palavra);    
-    for(int i = 0;palavra[i] != '\0' ;i++){
-        push(pilha,palavra[i]);
-    }
+    for(int i = 0; palavra[i] != '\0' ;i++){
+        push( pilha,palavra[i]);
+    };
 
-}
+};
 
 
 int main(){
