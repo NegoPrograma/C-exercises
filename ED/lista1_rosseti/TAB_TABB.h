@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 typedef struct ab{
+    int cor;
     int info;
     struct ab *esq, *dir;
 }TAB;
@@ -13,4 +14,4 @@ TAB* busca_ab(int e, TAB* t);
 TAB* busca_abb(int e, TAB* t);
 TAB* insere_abb(int e, TAB* t);
 TAB* retira_abb(int e, TAB *t);
-
+void imprime_ab_cor(TAB* t);

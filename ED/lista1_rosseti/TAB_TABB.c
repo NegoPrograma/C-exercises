@@ -36,6 +36,24 @@ void imprime_ab(TAB* a){
   imprime_aux(a, 1);
 }
 
+
+void imprime_aux_cor(TAB* a, int andar){
+  if(a){
+    int j;
+    imprime_aux_cor(a->esq, andar + 1);
+    for(j = 0; j <= andar; j++) printf("   ");
+    printf("%d\n", a->cor);
+    imprime_aux_cor(a->dir, andar + 1);
+  }
+}
+
+void imprime_ab_cor(TAB* a){
+  imprime_aux_cor(a, 1);
+}
+
+
+
+
 TAB* cria_ab(int x, TAB* e, TAB* d){
   TAB* a = (TAB*) malloc(sizeof(TAB));
   a->info = x;
