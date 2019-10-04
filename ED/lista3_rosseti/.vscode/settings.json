@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "tg.h": "c",
+        "stdlib.h": "c",
+        "tlse.h": "c",
+        "stdio.h": "c"
+    }
+}
