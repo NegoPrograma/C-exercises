@@ -3,6 +3,7 @@
         "arvorebinaria.h": "c",
         "stdlib.h": "c",
         "stdio.h": "c",
-        "tab_tabb.h": "c"
+        "tab_tabb.h": "c",
+        "tg.h": "c"
     }
 }

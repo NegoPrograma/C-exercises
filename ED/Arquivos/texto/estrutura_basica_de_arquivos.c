@@ -11,6 +11,7 @@ int main(void){
     “r+” Cria arquivo em modo texto para leitura ou gravação. Retorna NULL caso o arquivo não exista. 
     “w+” Cria arquivo em modo texto para atualização. Caso o arquivo já exista, tal arquivo é sobrescrito.
     “a+” Abre arquivo em modo texto para atualização a partir de seu final. Caso o arquivo não exista, o arquivo é criado. 
+    
     “rb” Abre arquivo para leitura em modo binário. Retorna NULL caso o arquivo não exista. 
     “wb” Cria arquivo em modo binário para gravação. Caso o arquivo já exista, tal arquivo é sobrescrito.
     “ab” Abre arquivo em modo binário para gravação a partir de seu final. Caso o arquivo não exista, o arquivo é criado.
