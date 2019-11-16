@@ -29,7 +29,6 @@ Lista* insere(Lista* l, NODE* n){
   aux = aux->prox;
   };
   aux->prox = crialista(n);
-
   return l;
 }
 
@@ -45,22 +44,6 @@ NODE* criaString(char* l, float f, int v,int c, NODE* d, NODE* e){
   return novoNo;
 };
 
-NODE* cria(char l[], float f, int v,int c, NODE* d, NODE* e){
-  NODE* novoNo = (NODE*) malloc(sizeof(NODE));
-  strcpy(novoNo->l,&l);
-  novoNo->f = f;
-  novoNo->v = v;
-  novoNo->c = c;
-  novoNo->dir = d;
-  novoNo->esq = e;
-  return novoNo;
-};
-
-/*NODE* geraHuffman(char* palavra){
-
-
-
-}*/
 
 int vogal(char m){
   if(m == 65 || m == 65+32)
@@ -84,13 +67,6 @@ int caixaAlta(int m){
 
 }
 
-Lista* retiraInicio(Lista* l,NODE** n){
-  Lista* lixo = l;
-  (*n) = criaString(l->n->l,l->n->f,l->n->v,l->n->c,l->n->dir,l->n->esq);
-  l = l->prox;
-  //free(lixo);
-  return l;
-}
 
 void imprimeLista(Lista* l){
 Lista* aux =l;
@@ -153,11 +129,6 @@ Lista* sort(Lista* l){
   return l;
 }
 
-void append(char* s, char c) {
-        int len = strlen(s);
-        s[len] = c;
-        s[len+1] = '\0';
-}
 
 int tamanho(Lista* l){
   int i = 0;
@@ -189,16 +160,6 @@ void imprime(NODE *a){
 }
 
 
-void imprimeArvore(NODE* n){
-  if(!n) return;
-  if(strlen(n->l) >1)
-    printf("%s \n",n->l);
-  else
-    printf("%c \n",n->l[0]);
-  imprimeArvore(n->esq);
-  imprimeArvore(n->dir);
-}
-
 Lista*retiraLista (Lista*v, Lista*retirado){
   Lista*aux = v,*pre = NULL;
   while(aux && aux->n != retirado->n){
@@ -226,7 +187,7 @@ Lista* menor(Lista* v){
   return menorLista;    
 }
 
-NODE* avhdois(Lista* v, NODE* raiz){
+NODE* avh(Lista* v, NODE* raiz){
 char m[52] = "";
   float f;
 Lista* atual = v,*menor1 = v,*menor2 = v;
@@ -251,68 +212,41 @@ Lista* atual = v,*menor1 = v,*menor2 = v;
 
 }
 
+int contaaltura(NODE* arv, int andar){
+  int esq, dir,maior;
+  if(!(arv->esq) && !(arv->dir))
+      return andar;
+  if(arv->esq)
+   esq = contaaltura(arv->esq, andar+1);
+  if(arv->dir)
+   dir = contaaltura(arv->dir,andar+1);
+  maior = (esq > dir) ? esq : dir;
+  return maior;  
+}
 
-
-NODE* avh(Lista* v,NODE* raiz){
-  char m[52] = "";
-  float f;
-  Lista* atual = v;
-  NODE* esq = NULL,*dir= NULL;
-    while(atual->prox){
-        atual = retiraInicio(atual,&esq);
-        atual = retiraInicio(atual,&dir);
-        f = esq->f + dir->f;
-        strcat(m,esq->l);
-        strcat(m,dir->l);
-        //raiz = (dir->f >= esq->f)?criaString(m,f,0,0,dir,esq):criaString(m,f,0,0,esq,dir);
-        if(strlen(esq->l) == 1 && strlen(dir->l) != 1 )
-          raiz = criaString(m,f,0,0,esq,dir);
-        else 
-            raiz = criaString(m,f,0,0,dir,esq);
-        atual = insereOrdenado(atual,raiz);
-        imprimeLista(atual);
-        imprime(raiz);
-        memset(m,0,sizeof(m));
-  }
-  return raiz;
+Lista* leituraArquivo(FILE* fp,Lista* l){
+int vogal,caixaAlta;
+float frequencia;
+char string[52];
+int readFile = fscanf(fp,"%s %f %d %d",string,&frequencia,&vogal,&caixaAlta);
+while(readFile != EOF){
+    l = insereOrdenado(l,criaString(string,frequencia,vogal,caixaAlta,NULL,NULL));
+    readFile = fscanf(fp,"%s %f %d %d",string,&frequencia,&vogal,&caixaAlta);
+    }
+    return l;
 }
 
 int main(void) {
-
+FILE* fp = fopen("padrao.txt","r");
 Lista* ldf = NULL;
-int i, n=52;
-
-srand(__TIME__);
-Lista* abc = NULL;
-for(i = 0; i < 26; i++){
-   ldf = insere(ldf, cria((char*)  65+i,(float) i,vogal(65+i),caixaAlta(65+i),NULL,NULL));
-
-}
-for(; i < 50; i++){
-   ldf = insere(ldf, cria((char*) 72+i,(float) i,vogal(72+i),caixaAlta(72+i),NULL,NULL));
-   /*if(i <33){
-     abc = insere(abc, cria((char*) 72+i,(float) (rand() % 20),vogal(72+i),caixaAlta(72+i),NULL,NULL));
-   }*/
-};
-ldf = sort(ldf);
+ldf = leituraArquivo(fp,ldf);
 NODE* raiz = NULL;
-int tamanhoLista = tamanho(ldf);
 //raiz = avh(ldf,raiz);
-imprimeLista(abc);
-/*abc = insere(abc, criaString("a",(float) 2,1,0,NULL,NULL));
-abc = insere(abc, criaString("o",(float) 4,1,0,NULL,NULL));
-abc = insere(abc, criaString("m",(float) 3,0,0,NULL,NULL));
-abc = insere(abc, criaString("g",(float) 1,0,0,NULL,NULL));
-abc = insere(abc, criaString("i",(float) 0.5,1,0,NULL,NULL));*/
-abc = sort(abc);
-imprimeLista(abc);
-printf("------------------------------------------\n\n\n raiz: %s \n\n\n",raiz->l);
-//imprime(raiz);
-printf("-------------------------------ALGORITIMO 2-----------\n\n\n");
+imprimeLista(ldf);
+fclose(fp);
 //teste a parte
- tamanhoLista = tamanho(abc);
-raiz = avhdois(abc,raiz);
-abc = retiraLista(abc,menor(abc));
+raiz = avh(ldf,raiz);
+printf("-------------------------------ALTURA DA ÁRVORE: %d-----------\n\n\n",contaaltura(raiz,1));
 //imprimeLista(retiraLista(abc,menor(abc)));
 //imprimeLista(abc);
 
