@@ -21,19 +21,7 @@ Lista* crialista(NODE* n){
   return l;
 }
 
-Lista* insere(Lista* l, NODE* n){
-  Lista* aux = l, *pre = NULL;
-  if(!l) return crialista(n);
-  while(aux->prox){
-  pre = aux;
-  aux = aux->prox;
-  };
-  aux->prox = crialista(n);
-  return l;
-}
-
-
-NODE* criaString(char* l, float f, int v,int c, NODE* d, NODE* e){
+NODE* criaNo(char* l, float f, int v,int c, NODE* d, NODE* e){
   NODE* novoNo = (NODE*) malloc(sizeof(NODE));
   strcpy(novoNo->l,l);
   novoNo->f = f;
@@ -98,12 +86,6 @@ Lista* insereOrdenado(Lista*l,NODE* n){
   return l;
 }
 
-Lista* ultimoElem(Lista*l){
-  while(l->prox) l = l->prox;
-  return l;
-}
-
-
 int maior(Lista*l1, Lista*l2){
   while(l1){
     if(l1->prox == l2)
@@ -113,32 +95,37 @@ int maior(Lista*l1, Lista*l2){
   return 0;
 }
 
-Lista* sort(Lista* l){
-  NODE* aux;
-  Lista* l2, *l1 = l;
-  for(; l1!= NULL; l1 = l1->prox){
-        l2 = l->prox;
-      for(; l2!=NULL; l2=l2->prox){
-          if((l1->n->f > l2->n->f) && maior(l1, l2)){
-              aux = l2->n;
-              l2->n = l1->n;
-              l1->n = aux;
-        }
-      }
+int contains(char c[], char* str){
+  char*aux = str;
+  if(!aux) return 0;
+  while((*aux) != '\0'){
+    if((*aux) == c[0]){
+      return 1;
     }
-  return l;
-}
-
-
-int tamanho(Lista* l){
-  int i = 0;
-  Lista*v = l;
-  while(v){
-    i++;
-    v =v->prox;
+    aux++;
   }
-  return i;
+  return 0;
 }
+
+
+void buscaNo(NODE* n,char c[]){
+  if(!n) return;
+  if(n->dir)
+    if(contains(c,n->dir->l)){
+      printf("1");
+      buscaNo(n->dir,c);
+      buscaNo(n->esq,c);
+    }
+  if(n->esq)
+      if(contains(c,n->esq->l)){
+      printf("0");
+      buscaNo(n->dir,c);
+      buscaNo(n->esq,c);
+    }
+  if(!n->dir && !n->esq && !contains(c,n->l))
+      printf("?");    
+}
+
 
 void imprime_aux(NODE *n, int andar){
   if(n){
@@ -200,55 +187,98 @@ Lista* atual = v,*menor1 = v,*menor2 = v;
         strcat(m,menor1->n->l);
         strcat(m,menor2->n->l);
        if(strlen(menor1->n->l) == 1 && strlen(menor2->n->l) != 1 )
-          raiz = criaString(m,f,0,0,menor1->n,menor2->n);
+          raiz = criaNo(m,f,0,0,menor1->n,menor2->n);
         else 
-            raiz = criaString(m,f,0,0,menor2->n,menor1->n);
+            raiz = criaNo(m,f,0,0,menor2->n,menor1->n);
         atual = insereOrdenado(atual,raiz);
-        imprimeLista(atual);
-        imprime(raiz);
         memset(m,0,sizeof(m));
   }
+  imprime(raiz);
   return raiz;
 
 }
 
-int contaaltura(NODE* arv, int andar){
-  int esq, dir,maior;
-  if(!(arv->esq) && !(arv->dir))
-      return andar;
-  if(arv->esq)
-   esq = contaaltura(arv->esq, andar+1);
-  if(arv->dir)
-   dir = contaaltura(arv->dir,andar+1);
-  maior = (esq > dir) ? esq : dir;
-  return maior;  
-}
 
-Lista* leituraArquivo(FILE* fp,Lista* l){
-int vogal,caixaAlta;
-float frequencia;
-char string[52];
-int readFile = fscanf(fp,"%s %f %d %d",string,&frequencia,&vogal,&caixaAlta);
-while(readFile != EOF){
-    l = insereOrdenado(l,criaString(string,frequencia,vogal,caixaAlta,NULL,NULL));
+Lista* leituraArquivo(char* nomeArq){
+  Lista* l = NULL;
+  FILE* fp = fopen(nomeArq,"r");
+  int vogal,caixaAlta;
+  float frequencia;
+  char string[52];
+  int readFile = fscanf(fp,"%s %f %d %d",string,&frequencia,&vogal,&caixaAlta);
+  while(readFile != EOF){
+    l = insereOrdenado(l,criaNo(string,frequencia,vogal,caixaAlta,NULL,NULL));
     readFile = fscanf(fp,"%s %f %d %d",string,&frequencia,&vogal,&caixaAlta);
-    }
-    return l;
+  }
+  fclose(fp);
+  return l;
+    
 }
 
+void codificaAvh(char* str,NODE* raiz){
+char n[] = "";
+for(; (*str) != '\0'; str++){
+  strncpy(n,str,1);
+  //printf("sim, a letra %c está em %s, visto o resultado de contains: %d\n\n\n",n[0],str,contains(n,str));
+  buscaNo(raiz,n);
+  }
+}
+
+void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
+  if(atual){
+  if(!atual->dir && !atual->esq){
+    printf("%c",atual->l[0]);
+    decodificaAvh(codigo,raiz,raiz);
+  } 
+  if( ((*codigo) == '1') || ((*codigo) == '0') )
+      if((*codigo) == '1'){
+        decodificaAvh(++codigo,atual->dir,raiz);
+       } else {
+        decodificaAvh(++codigo,atual->esq,raiz);
+      }
+  }
+}
+
+
+void leitura(NODE* raiz){
+  int op;
+  char palavra[100];
+    int n;
+  do{
+    if(op == 1){
+          do{
+    printf("Digite a palavra a ser codificada:\n");  
+    scanf(" %[^\n]",palavra);
+    printf("\ncódigo da palavra: ");
+    codificaAvh(palavra,raiz);
+    printf("\ndeseja continuar codificando? Se sim, digite 1, caso contrário, qualquer outro número.\n");
+    scanf("%d",&n);
+    }while(n == 1);
+    } else if(op == 2) {
+      do{
+      printf("\nDigite o código a ser decodificado:\n");  
+      scanf(" %[^\n]",palavra);
+      printf("\n A palavra correspondente é:  ");
+      decodificaAvh(palavra,raiz,raiz);
+      printf("\nDeseja continuar decodificando? Se sim, digite 2, caso contrário, qualquer outro número.\n");
+      scanf("%d",&n);
+      }while(n == 2);
+    } 
+    printf("\nMenu:\n1- codificar palavras \n2- decodificar códigos.\nPara sair, digite qualquer outro número.\n");
+    scanf(" %d",&op);
+  }while(op == 1 || op == 2);
+    
+  
+
+}
 int main(void) {
-FILE* fp = fopen("padrao.txt","r");
-Lista* ldf = NULL;
-ldf = leituraArquivo(fp,ldf);
-NODE* raiz = NULL;
-//raiz = avh(ldf,raiz);
-imprimeLista(ldf);
-fclose(fp);
-//teste a parte
-raiz = avh(ldf,raiz);
-printf("-------------------------------ALTURA DA ÁRVORE: %d-----------\n\n\n",contaaltura(raiz,1));
-//imprimeLista(retiraLista(abc,menor(abc)));
-//imprimeLista(abc);
+  //lendo a lista e criando a árvore  
+  Lista* ldf = NULL;
+  ldf = leituraArquivo("experimental.txt");
+  NODE* raiz = NULL;
+  raiz = avh(ldf,raiz);
+  //interagindo com o usuário
+  leitura(raiz);
 
 
 
