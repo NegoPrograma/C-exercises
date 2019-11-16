@@ -101,22 +101,23 @@ while(aux != NULL){
    printf("%c %.2f %d %d \n",aux->n->l[0],aux->n->f,aux->n->v,aux->n->c);
   aux = aux->prox;
   }
+  printf("fim lista\n");
 }
 
 Lista* insereOrdenado(Lista*l,NODE* n){
   if(!l) return crialista(n);
   Lista*aux = l,*pre = NULL,*novo;
-  while(aux && (aux->n->f <= n->f)){
+  while(aux && (aux->n->f < n->f)){
     pre = aux;
     aux = aux->prox;
   }
   novo = crialista(n);
   if(pre){
-  novo->prox = aux;
   pre->prox = novo;
-  } else {
+  novo->prox = aux;
+  } else{
       novo->prox = aux;
-      
+      return novo;
   }
   return l;
 }
@@ -172,7 +173,7 @@ void imprime_aux(NODE *n, int andar){
   if(n){
       int j;
       imprime_aux(n->esq,andar+1);
-      for(j=0; j<=andar; j++) printf("            ");
+      for(j=0; j<=andar; j++) printf("       ");
       if(strlen(n->l) >1)
         printf("%s %.0f\n",n->l,n->f);
       else
@@ -198,21 +199,73 @@ void imprimeArvore(NODE* n){
   imprimeArvore(n->dir);
 }
 
+Lista*retiraLista (Lista*v, Lista*retirado){
+  Lista*aux = v,*pre = NULL;
+  while(aux && aux->n != retirado->n){
+    pre = aux;
+    aux = aux->prox;
+  };
+  if(pre)
+  pre->prox = aux->prox;
+  else{
+    aux = aux->prox;
+    return aux;
+  }
+  return v;
+}
 
-NODE* avh(Lista* v,NODE* raiz,int fim){
+Lista* menor(Lista* v){
+  Lista* lista = v,*menorLista = v;
+  float menor = lista->n->f;
+  for(;lista != NULL;lista = lista->prox){
+          if(menor > lista->n->f){
+            menor = lista->n->f;
+            menorLista = lista;
+        }
+    }
+  return menorLista;    
+}
+
+NODE* avhdois(Lista* v, NODE* raiz){
+char m[52] = "";
+  float f;
+Lista* atual = v,*menor1 = v,*menor2 = v;
+    while(atual->prox){
+        menor1 = menor(atual);
+        atual = retiraLista(atual,menor1);
+        menor2 = menor(atual);
+        atual = retiraLista(atual,menor2);
+        f = menor1->n->f + menor2->n->f;
+        strcat(m,menor1->n->l);
+        strcat(m,menor2->n->l);
+       if(strlen(menor1->n->l) == 1 && strlen(menor2->n->l) != 1 )
+          raiz = criaString(m,f,0,0,menor1->n,menor2->n);
+        else 
+            raiz = criaString(m,f,0,0,menor2->n,menor1->n);
+        atual = insereOrdenado(atual,raiz);
+        imprimeLista(atual);
+        imprime(raiz);
+        memset(m,0,sizeof(m));
+  }
+  return raiz;
+
+}
+
+
+
+NODE* avh(Lista* v,NODE* raiz){
   char m[52] = "";
   float f;
-  Lista* atual = v,*anterior=NULL;
+  Lista* atual = v;
   NODE* esq = NULL,*dir= NULL;
-  int i = 0;
-    while(i < fim-1){
+    while(atual->prox){
         atual = retiraInicio(atual,&esq);
         atual = retiraInicio(atual,&dir);
         f = esq->f + dir->f;
         strcat(m,esq->l);
         strcat(m,dir->l);
         //raiz = (dir->f >= esq->f)?criaString(m,f,0,0,dir,esq):criaString(m,f,0,0,esq,dir);
-        if(strlen(esq->l) == 1 && strlen(dir->l) != 1 && esq->f <= dir->f )
+        if(strlen(esq->l) == 1 && strlen(dir->l) != 1 )
           raiz = criaString(m,f,0,0,esq,dir);
         else 
             raiz = criaString(m,f,0,0,dir,esq);
@@ -220,7 +273,6 @@ NODE* avh(Lista* v,NODE* raiz,int fim){
         imprimeLista(atual);
         imprime(raiz);
         memset(m,0,sizeof(m));
-        i++;
   }
   return raiz;
 }
@@ -230,30 +282,36 @@ int main(void) {
 Lista* ldf = NULL;
 int i, n=52;
 
-
+srand(__TIME__);
 Lista* abc = NULL;
 for(i = 0; i < 26; i++){
    ldf = insere(ldf, cria((char*)  65+i,(float) i,vogal(65+i),caixaAlta(65+i),NULL,NULL));
 
 }
-for(; i < 51; i++){
+for(; i < 50; i++){
    ldf = insere(ldf, cria((char*) 72+i,(float) i,vogal(72+i),caixaAlta(72+i),NULL,NULL));
-   if(i <31){
-     abc = insere(abc, cria((char*) 72+i,(float) i-25,vogal(72+i),caixaAlta(72+i),NULL,NULL));
+   if(i <33){
+     abc = insere(abc, cria((char*) 72+i,(float) (rand() % 20),vogal(72+i),caixaAlta(72+i),NULL,NULL));
    }
 };
 ldf = sort(ldf);
 NODE* raiz = NULL;
 int tamanhoLista = tamanho(ldf);
-//raiz = avh(ldf,raiz,tamanhoLista+1);
-
+//raiz = avh(ldf,raiz);
+imprimeLista(abc);
+abc = sort(abc);
 imprimeLista(abc);
 printf("------------------------------------------\n\n\n raiz: %s \n\n\n",raiz->l);
 //imprime(raiz);
-printf("-------------------------------TESTE MENOR EM ARVORES MENORES-----------\n\n\n");
+printf("-------------------------------ALGORITIMO 2-----------\n\n\n");
 //teste a parte
  tamanhoLista = tamanho(abc);
-raiz = avh(abc,raiz,tamanhoLista);
+raiz = avhdois(abc,raiz);
+abc = retiraLista(abc,menor(abc));
+//imprimeLista(retiraLista(abc,menor(abc)));
+//imprimeLista(abc);
+
+
 
   return 0;
 }
