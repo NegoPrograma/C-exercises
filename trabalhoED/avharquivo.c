@@ -110,11 +110,11 @@ int contains(char c[], char* str){
 
 void codifica(NODE* n,char c[]){
   if(!n) return;
-  if(contains(c,n->dir->l)){
+  if(contains(c,n->dir->l) || (!contains(c,n->esq->l) && n->dir->l == "?")){
       printf("1");
       codifica(n->dir,c);
     }
-  else if(contains(c,n->esq->l)){
+  else if(contains(c,n->esq->l) || (!contains(c,n->dir->l) && n->esq->l == "?")){
       printf("0");
       codifica(n->esq,c);
     }
@@ -229,35 +229,27 @@ for(; (*str) != '\0'; str++){
   }
 }
 
-void decodificaAvh(char* codigo, NODE* atual,NODE* raiz,int direcao){
-  if(!atual) return;
+void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
+  if(atual){
   if(!atual->dir && !atual->esq){
     printf("%c",atual->l[0]);
-    decodificaAvh(codigo,raiz,raiz,direcao);
+    decodificaAvh(codigo,raiz,raiz);
     } 
-    else if(!atual->dir || !atual->esq) {
-      if(!atual->dir && direcao){
-      printf("?");
-      decodificaAvh(codigo,raiz,raiz,direcao);
-    } else if(!atual->esq && !direcao){
-      printf("?");
-      decodificaAvh(codigo,raiz,raiz,direcao);
-    }
-  } 
+   
   if((*codigo) != '\0')
       if((*codigo) == '1'){
-        direcao = 1;
-        decodificaAvh(++codigo,atual->dir,raiz,direcao);
+        decodificaAvh(++codigo,atual->dir,raiz);
       }
       else if((*codigo) == '0'){
-        direcao = 0;
-        decodificaAvh(++codigo,atual->esq,raiz,direcao);
+        decodificaAvh(++codigo,atual->esq,raiz);
       }
+    }
   }
 
 NODE* retiraLetra(NODE* raiz, char* letra){
     NODE* lixo = buscaNo(letra,raiz);
-    free(lixo);
+    strcpy(lixo->l,"?");
+    lixo->f = 0;
     return raiz;
 }
 void leitura(NODE* raiz){
@@ -278,7 +270,7 @@ void leitura(NODE* raiz){
         printf("\nDigite o código a ser decodificado:\n");  
         scanf(" %[^\n]",palavra);
         printf("\n A palavra correspondente é:  ");
-        decodificaAvh(palavra,raiz,raiz,0);
+        decodificaAvh(palavra,raiz,raiz);
         printf("\nDeseja continuar decodificando? Se sim, digite 2, caso contrário, qualquer outro número.\n");
         scanf("%d",&n);
       }while(n == 2);
@@ -291,7 +283,7 @@ void leitura(NODE* raiz){
     } else if(op == 4){
       imprime(raiz);
     }
-    printf("\nMenu:\n1- codificar palavras. \n2- decodificar códigos.\n3- retirar letras.\n4-Mostrar a árvore.\nPara sair, digite qualquer outro número.\n");
+    printf("\nMenu:\n1 - Codificar palavras. \n2 - Decodificar códigos.\n3 - Retirar letras.\n4 - Mostrar a árvore.\nPara sair, digite qualquer outro número.\n");
     scanf(" %d",&op);
   }while(op > 0 && op < 5);
     
