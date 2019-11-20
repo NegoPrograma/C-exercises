@@ -120,28 +120,32 @@ void codifica(NODE* n,char c[]){
     }
 }
 
-NODE* buscaNo(char c[],NODE*raiz){
+NODE* buscaNoArvore(char c[],NODE*raiz){
   if(!raiz) return raiz;
   if(!raiz->dir && !raiz->esq)
         return raiz;
   if(contains(c,raiz->dir->l)){
-     buscaNo(c,raiz->dir);
+     buscaNoArvore(c,raiz->dir);
     }
   else if(contains(c,raiz->esq->l)){
-     buscaNo(c,raiz->esq);
+     buscaNoArvore(c,raiz->esq);
     }
 }
+
+
 
 
 void imprime_aux(NODE *n, int andar){
   if(n){
       int j;
       imprime_aux(n->esq,andar+1);
-      for(j=0; j<=andar; j++) printf("     ");
-      if(strlen(n->l) >1)
-        printf("%s %.1f\n",n->l,n->f);
-      else
-        printf("%c %.1f\n",n->l[0],n->f);
+      for(j=0; j<=andar; j++) printf("         ");
+      if(strcmp(n->l,"?")){
+        if(strlen(n->l) >1)
+          printf("%s %.1f\n",n->l,n->f);
+        else
+          printf("%c %.1f\n",n->l[0],n->f);
+      }
 //printf("%.0f \n",n->f);  
       imprime_aux(n->dir,andar+1);
   }
@@ -150,6 +154,14 @@ void imprime_aux(NODE *n, int andar){
 
 void imprime(NODE *a){
   imprime_aux(a, 1);
+}
+
+NODE* buscaNoLista(Lista *v,char* letra){
+  if(!v) return NULL;
+  Lista* aux = v;
+  while(aux && !contains(letra,aux->n->l)) aux = aux->prox;
+  if(!aux) return NULL;
+  return aux->n;
 }
 
 
@@ -247,57 +259,171 @@ void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
   }
 
 NODE* retiraLetra(NODE* raiz, char* letra){
-    NODE* lixo = buscaNo(letra,raiz);
+    NODE* lixo = buscaNoArvore(letra,raiz);
     strcpy(lixo->l,"?");
     lixo->f = 0;
     return raiz;
 }
-void leitura(NODE* raiz){
-  int op,n;
+
+void liberaLista(Lista* l){
+  Lista* lixo;
+  while(l){
+    lixo = l;
+    l = l->prox;
+    free(lixo);
+  }
+}
+
+NODE* retiraVogais(NODE* raiz){
+  if(raiz){
+    raiz->dir = retiraVogais(raiz->dir);
+    raiz->esq = retiraVogais(raiz->esq);  
+    if(raiz->v == 1){
+      raiz = retiraLetra(raiz,raiz->l);
+      return raiz;
+    }
+    return raiz;
+  }
+}
+
+NODE* retiraConsoantes(NODE* raiz){
+  if(raiz){
+    if(raiz->v == 0){
+      raiz = retiraLetra(raiz,raiz->l);
+      return raiz;
+    }
+    raiz->dir = retiraVogais(raiz->dir);
+    raiz->esq = retiraVogais(raiz->esq);  
+    return raiz;
+  }
+}
+
+NODE* retiraCaixaAlta(NODE* raiz){
+  if(raiz){
+    if(raiz->c == 1){
+      raiz = retiraLetra(raiz,raiz->l);
+      return raiz;
+    }
+    raiz->dir = retiraVogais(raiz->dir);
+    raiz->esq = retiraVogais(raiz->esq);  
+    return raiz;
+  }
+}
+
+NODE* retiraCaixaBaixa(NODE* raiz){
+  if(raiz){
+    if(raiz->c == 0){
+      raiz = retiraLetra(raiz,raiz->l);
+      return raiz;
+    }
+    raiz->dir = retiraVogais(raiz->dir);
+    raiz->esq = retiraVogais(raiz->esq);  
+    return raiz;
+  }
+}
+
+void liberaArvore(NODE* raiz){
+  if(!raiz) return;
+  if(raiz){
+  liberaArvore(raiz->dir);
+  liberaArvore(raiz->esq);
+  free(raiz);
+  }
+}
+
+void leitura(char* arquivo){
+  //inicializando a árvore
+  Lista* ldf = NULL;
+  ldf = leituraArquivo(arquivo);
+  NODE* raiz = NULL,*noAux;
+  raiz = avh(ldf,raiz);
+  int op,n,vogal,caixaAlta;
+  float frequencia;
   char palavra[100],letra[]="",letraAux;
   do{
+    
     if(op == 1){
       do{
         printf("Digite a palavra a ser codificada:\n");  
         scanf(" %[^\n]",palavra);
         printf("\ncódigo da palavra: ");
         codificaAvh(palavra,raiz);
-        printf("\ndeseja continuar codificando? Se sim, digite 1, caso contrário, qualquer outro número.\n");
+        printf("\ndeseja continuar codificando? Se sim, digite 1, caso contrário, digite 0.\n");
         scanf("%d",&n);
-    }while(n == 1);
+    }while(n != 0);
+    //---------------------OPÇÃO 2 ---------------------------//
     } else if(op == 2) {
       do{
         printf("\nDigite o código a ser decodificado:\n");  
         scanf(" %[^\n]",palavra);
         printf("\n A palavra correspondente é:  ");
         decodificaAvh(palavra,raiz,raiz);
-        printf("\nDeseja continuar decodificando? Se sim, digite 2, caso contrário, qualquer outro número.\n");
+        printf("\nDeseja continuar decodificando? Se sim, digite 1, caso contrário, digite 0.\n");
         scanf("%d",&n);
-      }while(n == 2);
-    } else if(op == 3){
+      }while(n != 0);
+    } 
+    //---------------------OPÇÃO 3 ---------------------------//
+    else if(op == 3){
+      printf("\nDeseja retirar uma única letra ou múltiplas letras? (1/2)\n");
+      scanf("%d",&n);
+      if(n == 1){
       printf("digite a letra a ser retirada:\n");
       scanf(" %c",&letraAux);
       strcpy(letra,&letraAux);
       raiz = retiraLetra(raiz,letra);
-
+      } else if(n == 2) {
+        printf("\nOk, você escolheu retirar múltiplas letras. \nGostaria de escolher exatamente quais letras tirar(1)\nOu gostaria de remover ela segundo características em comum? (remover somente vogais, por exemplo)(2)\n");
+        scanf("%d",&n);
+        if(n == 1){
+          do{
+            printf("digite a letra a ser retirada:\n");
+            scanf(" %c",&letraAux);
+            strcpy(letra,&letraAux);
+            raiz = retiraLetra(raiz,letra);
+            printf("deseja continuar retirando letras? caso não, digite 0 para sair.");
+            scanf("%d",&n);
+          }while(n != 0);
+        } else if(n == 2){
+          printf("\nPara escolher os critérios de remoção, digite os números correspondentes abaixo:\n1 - Vogais\n2 - Consoantes\n3 - Minusculas\n4 - Maiúsculas\n");
+          scanf(" %[^\n]",palavra);
+          printf("entrada: %s",palavra);
+          if(contains("1",palavra)){
+              raiz = retiraVogais(raiz);
+              }
+          if(contains("2",palavra))
+              raiz = retiraConsoantes(raiz);
+          if(contains("3",palavra))
+              raiz = retiraCaixaAlta(raiz);
+          if(contains("4",palavra))
+              raiz = retiraCaixaBaixa(raiz);                            
+        }
+      }
+//---------------------OPÇÃO 4 ---------------------------//
     } else if(op == 4){
       imprime(raiz);
+//---------------------OPÇÃO 5 ---------------------------//
+    } else if(op == 5){
+      printf("digite a letra cuja frequência será mudada:\n");
+      scanf(" %c",&letraAux);
+      strcpy(letra,&letraAux);
+      printf("Digite a nova frequência:\n");
+      scanf("%f",&frequencia);
+      ldf = leituraArquivo(arquivo);
+      noAux = buscaNoLista(ldf,letra);
+      noAux->f = frequencia;
+      raiz = avh(ldf,raiz);
     }
-    printf("\nMenu:\n1 - Codificar palavras. \n2 - Decodificar códigos.\n3 - Retirar letras.\n4 - Mostrar a árvore.\nPara sair, digite qualquer outro número.\n");
+    printf("\nMenu:\n1 - Codificar palavras. \n2 - Decodificar códigos.\n3 - Retirar letras.\n4 - Mostrar a árvore.\n5 - Alterar a frequência de uma letra.\nPara sair, digite 0.\n");
     scanf(" %d",&op);
-  }while(op > 0 && op < 5);
-    
-  
-
+  }while(op != 0);
+  liberaArvore(raiz);
+  liberaLista(ldf);
 }
+
 int main(void) {
-  //lendo a lista e criando a árvore  
-  Lista* ldf = NULL;
-  ldf = leituraArquivo("padrao.txt");
-  NODE* raiz = NULL;
-  raiz = avh(ldf,raiz);
+  //lendo a lista e criando a árvore 
   //interagindo com o usuário
-  leitura(raiz);
+  leitura("experimental.txt");
 
 
 
