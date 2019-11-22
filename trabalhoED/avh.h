@@ -13,8 +13,8 @@ typedef struct l{
 
 Lista* crialista(NODE* n);
 NODE* criaNo(char* l, float f, int v,int c, NODE* d, NODE* e);
-int verificaVogal(char m);
-int verificaCaixaAlta(int m);
+char* verificaVogal(NODE* n);
+char* verificaCaixaAlta(NODE* n);
 void imprimeLista(Lista* l);
 Lista* insereOrdenado(Lista*l,NODE* n);
 int contains(char* c, char* str);
@@ -29,7 +29,6 @@ Lista* menor(Lista* v);
 NODE* avh(Lista* v, NODE* raiz);
 Lista* leituraArquivo(char* nomeArq);
 void decodificaAvh(char* codigo, NODE* atual,NODE* raiz);
-void retiraLetra(NODE** no);
 void liberaLista(Lista* l);
 void liberaArvore(NODE* raiz);
 Lista* procuraVogais(NODE* n,Lista* l);
