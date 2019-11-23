@@ -13,8 +13,10 @@ typedef struct l{
 
 Lista* crialista(NODE* n);
 NODE* criaNo(char* l, float f, int v,int c, NODE* d, NODE* e);
-char* verificaVogal(NODE* n);
-char* verificaCaixaAlta(NODE* n);
+int eVogal(char* n);
+int eCaixaAlta(char* n);
+char* printaVogal(NODE* n);
+char* printaCaixaAlta(NODE* n);
 void imprimeLista(Lista* l);
 Lista* insereOrdenado(Lista*l,NODE* n);
 int contains(char* c, char* str);
@@ -35,5 +37,7 @@ Lista* procuraVogais(NODE* n,Lista* l);
 Lista* procuraConsoantes(NODE* n,Lista* l);
 Lista* procuraCaixaAlta(NODE* n,Lista* l);
 Lista* procuraCaixaBaixa(NODE* n,Lista* l);
+Lista* filtro(Lista* l,int vouc);
+void atualizaArquivo(Lista* l, char* arquivo);
 Lista* customQuery(char* palavra, Lista* list,NODE* raiz);
 void leitura(char* arquivo);
