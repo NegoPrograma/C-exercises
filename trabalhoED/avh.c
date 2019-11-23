@@ -491,7 +491,7 @@ NODE* opcaoAlteraFrequencia(NODE* raiz, char* arquivo){
     return raiz;      
 }
 
-void opcaoMostraUmNo(NODE* raiz){
+void opcaoMostraNos(NODE* raiz){
   int n;
   NODE* noAux = NULL;
   char* palavra = (char*) malloc(sizeof(char)*100);
@@ -511,90 +511,40 @@ void opcaoMostraUmNo(NODE* raiz){
     }while(n != 0);
 }
 
-void leitura(char* arquivo){
-  //inicializando a árvore
-  Lista* ldf = NULL,*lra = NULL;
-  ldf = leituraArquivo(arquivo);
-  NODE* raiz = NULL,*noAux;
-  raiz = avh(ldf,raiz);
-  ldf = NULL;
-  //variaveis do menu
-  int op,n,vogal,caixaAlta;
-  float frequencia;
-  char* palavra = (char*) malloc(sizeof(char)*100);
-  do{
-    
-    if(op == 1){
-    opcaoCodifica(raiz);
-    //-------------------------------OPÇÃO 2 ---------------------------------------//
-    } else if(op == 2) {
-      opcaoDecodifica(raiz);
+void opcaoMostraNosPorChave(NODE* raiz){
+  int n;
+  Lista* ldf= NULL;
+  printf("\nVocê escolheu pesquisar de acordo com características em comum.\n As letras que você deseja pesquisar são:\n1 - Vogais\n2 - Consoantes\n3 - Ambas.\n");
+  scanf(" %d",&n);
+  if(n == 1){
+    ldf = procuraVogais(raiz,ldf);
+    printf("\nVocê escolheu pesquisar as letras vogais.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
+    scanf(" %d",&n);
+    ldf = filtro(ldf,n);
+    imprimeLista(ldf);
     } 
-    //-------------------------------OPÇÃO 3 ---------------------------------------//
-    else if(op == 3){
-        printf("\n. \nGostaria de escolher exatamente quais letras tirar(1)\nOu gostaria de remover elas segundo características em comum? (remover somente vogais, por exemplo)(2)\n");
-        scanf(" %d",&n);
-        if(n == 1)
-            do{
-            raiz = opcaoRemove(raiz,arquivo);          
-             printf("deseja continuar retirando letras? caso não, digite 0 para sair.");
-            scanf("%d",&n);
-          }while(n != 0);
-         else if(n == 2)
-          raiz = opcaoRemovePorChaves(raiz,arquivo);
-//-------------------------------OPÇÃO 4 ---------------------------------------//
-    } else if(op == 4)
-       opcaoMostraArvore(raiz);
-//-------------------------------OPÇÃO 5 ---------------------------------------//
-     else if(op == 5)
-      raiz = opcaoAlteraFrequencia(raiz,arquivo);
-//-------------------------------OPÇÃO 6 ---------------------------------------//
-    else if(op == 6){
-        printf("Ok, você deseja saber o conteúdo de nós. Porém, como você pretende pesquisar?\n1 - Digitando o conteúdo do nó um de cada vez\n2 - Usando critérios em comum\n");
-        scanf("%d",&n);
-        if(n == 1){
-          do{
-            printf("Digite o conteúdo do nó desejado:\n");
-            scanf(" %[^\n]",palavra);
-            noAux = buscaNoArvore(palavra,raiz);
-            if(noAux){
-            printf("\n-----------------------------------------------------\n");
-            printf("|   conteúdo: %s frequência: %.2f %s %s |",noAux->l,noAux->f,printaVogal(noAux),printaCaixaAlta(noAux));
-            printf("\n-----------------------------------------------------\n");
-            } else {
-              printf("Não existe nenhum nó com esse conteúdo.\n");
-            }
-            printf("Deseja saber mais informações sobre algum outro nó? Se sim, digite 1, caso contrário, digite 0.\n");
-            scanf(" %d",&n);
-            }while(n != 0);
-        }
-        else if(n == 2){
-          printf("\nVocê escolheu pesquisar de acordo com características em comum.\n As letras que você deseja pesquisar são:\n1 - Vogais\n2 - Consoantes\n3 - Ambas.\n");
-          scanf(" %d",&n);
-          if(n == 1){
-            ldf = procuraVogais(raiz,ldf);
-            printf("\nVocê escolheu pesquisar as letras vogais.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-            scanf(" %d",&n);
-            ldf = filtro(ldf,n);
-            imprimeLista(ldf);
-            } 
-          else if(n == 2){
-              ldf = procuraConsoantes(raiz,ldf);
-              printf("\nVocê escolheu pesquisar as letras consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-              scanf(" %d",&n);
-              ldf = filtro(ldf,n);
-              imprimeLista(ldf);
-            } else{
-              ldf = customQuery("12",ldf,raiz);
-              printf("\nVocê escolheu pesquisar tanto vogais quanto consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-              scanf("%d",&n);
-              ldf = filtro(ldf,n);
-              imprimeLista(ldf);
-            }
-            ldf = NULL;
-          }
-        } else if(op == 7){
-          printf("Você decidiu adicionar uma nova letra.\nDigite a letra desejada: ");
+  else if(n == 2){
+      ldf = procuraConsoantes(raiz,ldf);
+      printf("\nVocê escolheu pesquisar as letras consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
+      scanf(" %d",&n);
+      ldf = filtro(ldf,n);
+      imprimeLista(ldf);
+    } else{
+      ldf = customQuery("12",ldf,raiz);
+      printf("\nVocê escolheu pesquisar tanto vogais quanto consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
+      scanf("%d",&n);
+      ldf = filtro(ldf,n);
+      imprimeLista(ldf);
+    }
+    ldf = NULL;
+}
+
+NODE* opcaoAdicionaLetra(NODE* raiz, char* arquivo){
+  float frequencia;
+  NODE* noAux = NULL;
+  char* palavra = (char*) malloc(sizeof(char)*100);
+  Lista* ldf = NULL, *lra = NULL;
+  printf("Você decidiu adicionar uma nova letra.\nDigite a letra desejada: ");
           scanf("%s",palavra);
           if(!buscaNoArvore(palavra,raiz) && strlen(palavra)<2 && strlen(palavra)>0){
           printf("\nfrequência: ");
@@ -610,8 +560,52 @@ void leitura(char* arquivo){
           ldf = lra = NULL;
           } else 
             printf("Não foi possível adicionar letra.\n");
+    return raiz;            
+}
 
-        }
+void leitura(char* arquivo){
+  //inicializando a árvore
+  Lista* ldf = NULL,*lra = NULL;
+  ldf = leituraArquivo(arquivo);
+  NODE* raiz = NULL,*noAux;
+  raiz = avh(ldf,raiz);
+  ldf = NULL;
+  //variaveis do menu
+  int op,n,vogal,caixaAlta;
+  float frequencia;
+  char* palavra = (char*) malloc(sizeof(char)*100);
+  do{
+    
+    if(op == 1)
+      opcaoCodifica(raiz);
+    else if(op == 2) 
+      opcaoDecodifica(raiz);
+    else if(op == 3){
+      printf("\n. \nGostaria de escolher exatamente quais letras tirar(1)\nOu gostaria de remover elas segundo características em comum? (remover somente vogais, por exemplo)(2)\n");
+      scanf(" %d",&n);
+      if(n == 1)
+          do{
+            raiz = opcaoRemove(raiz,arquivo);          
+            printf("deseja continuar retirando letras? caso não, digite 0 para sair.");
+            scanf("%d",&n);
+          }while(n != 0);
+      else if(n == 2)
+          raiz = opcaoRemovePorChaves(raiz,arquivo);
+    } 
+    else if(op == 4)
+          opcaoMostraArvore(raiz);
+    else if(op == 5)
+          raiz = opcaoAlteraFrequencia(raiz,arquivo);
+    else if(op == 6){
+          printf("Ok, você deseja saber o conteúdo de nós. Porém, como você pretende pesquisar?\n1 - Digitando o conteúdo do nó um de cada vez\n2 - Usando critérios em comum\n");
+          scanf("%d",&n);
+          if(n == 1)
+            opcaoMostraNos(raiz);
+          else if(n == 2)
+            opcaoMostraNosPorChave(raiz);
+    } 
+    else if(op == 7)
+         raiz = opcaoAdicionaLetra(raiz,arquivo);
     printf("\nMenu:\n1 - Codificar palavras. \n2 - Decodificar códigos.\n3 - Retirar letras.\n4 - Mostrar a árvore.\n5 - Alterar a frequência de uma letra.\n6 - Ver dados sobre os nós disponíveis.\n7 - Adicionar letra\nPara sair, digite 0.\n");
     scanf(" %d",&op);
   }while(op != 0);
