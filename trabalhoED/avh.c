@@ -126,7 +126,7 @@ for(; (*str) != '\0'; str++){
 
 NODE* buscaNoArvore(char* c,NODE*raiz){
   if(!raiz) return raiz;
-  if(contains(c,raiz->l) && !raiz->dir && !raiz->esq)
+  if(contains(c,raiz->l) && !strcmp(c,raiz->l))
         return raiz;
   else if(raiz->dir && contains(c,raiz->dir->l)){
      return buscaNoArvore(c,raiz->dir);
@@ -246,6 +246,7 @@ Lista* leituraArquivo(char* nomeArq){
 
 void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
   if(!atual) return;
+  if((*codigo) == '?')codigo++;
   if(!atual->dir && !atual->esq){
     printf("%c",atual->l[0]);
     decodificaAvh(codigo,raiz,raiz);
@@ -254,6 +255,8 @@ void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
     decodificaAvh(++codigo,atual->dir,raiz);
   else if((*codigo) == '0')
     decodificaAvh(++codigo,atual->esq,raiz);
+  /*else
+	  decodificaAvh(++codigo, atual, raiz);*/
 }
 
 void liberaLista(Lista* l){
@@ -374,6 +377,17 @@ void opcaoCodifica(NODE* raiz){
     free(palavra);
 }
 
+char* filtraPalavra(char* palavra){
+  char* novaPalavra = (char*) malloc(sizeof(char)*strlen(palavra));
+  while((*palavra)!= '\0'){
+    if((*palavra) == '0' || (*palavra) == '1')
+      strncat(novaPalavra,palavra,1);
+    palavra++;  
+  }
+  printf("palavra filtrada: %s",novaPalavra);
+  return novaPalavra;
+}
+
 void opcaoDecodifica(NODE* raiz){
   int n = 0;
   char* palavra = (char*) malloc(sizeof(char)*100);
@@ -402,10 +416,11 @@ NODE* opcaoRemove(NODE* raiz,char* arquivo){
         while(lra){
         ldf = retiraLista(ldf,lra);
         lra = lra->prox;
-        }
-       atualizaArquivo(ldf,arquivo);
+        } 
+        atualizaArquivo(ldf,arquivo);
         raiz = avh(ldf,raiz);
-      }
+      } else 
+          printf("Essa letra não está presente na árvore.\n");
   free(palavra);
   liberaLista(ldf);
   liberaLista(lra);  
@@ -417,7 +432,7 @@ NODE* opcaoRemovePorChaves(NODE* raiz,char* arquivo){
   NODE* noAux = NULL;
   char* palavra = (char*) malloc(sizeof(char)*100);
   int n;
-        printf("\nVocê decidiu remover elementos de acordo com características em comum.\n os elementos a serem retirados são:\n1 - Vogais\n2 - Consoantes\n3- Ambos");
+        printf("\nVocê decidiu remover elementos de acordo com características em comum.\n os elementos a serem retirados são:\n1 - Vogais\n2 - Consoantes\n3 - Ambos\n");
         scanf("%d",&n);
         if(n == 1){
           lra = procuraVogais(raiz,lra);
@@ -450,12 +465,12 @@ void opcaoMostraArvore(NODE*raiz){
   int n;
   NODE* noAux = NULL;
   char* palavra = (char*) malloc(sizeof(char)*100);
-  printf("Deseja ver a árvore inteira ou a partir de um nó de sua escolha?\n1 - Árvore inteira\n2 - Sub-árvore.\n");
+  printf("Deseja ver a árvore inteira ou a partir de um nó de sua escolha?\n1 - Árvore inteira.\n2 - Sub-árvore.\n");
   scanf("%d",&n);
   if(n == 1)
     imprimeArvore(raiz);
   else if(n == 2){
-    printf("Digite o nó principal da sua sub-árvore.");
+    printf("Digite o nó principal da sua sub-árvore.\n");
     scanf(" %[^\n]",palavra);
     noAux = buscaNoArvore(palavra,raiz);
     if(noAux)
@@ -565,23 +580,19 @@ NODE* opcaoAdicionaLetra(NODE* raiz, char* arquivo){
 
 void leitura(char* arquivo){
   //inicializando a árvore
-  Lista* ldf = NULL,*lra = NULL;
+  Lista* ldf = NULL;
   ldf = leituraArquivo(arquivo);
-  NODE* raiz = NULL,*noAux;
+  NODE* raiz = NULL;
   raiz = avh(ldf,raiz);
-  ldf = NULL;
   //variaveis do menu
-  int op,n,vogal,caixaAlta;
-  float frequencia;
-  char* palavra = (char*) malloc(sizeof(char)*100);
+  int op = 0,n = 0;
   do{
-    
     if(op == 1)
       opcaoCodifica(raiz);
     else if(op == 2) 
       opcaoDecodifica(raiz);
     else if(op == 3){
-      printf("\n. \nGostaria de escolher exatamente quais letras tirar(1)\nOu gostaria de remover elas segundo características em comum? (remover somente vogais, por exemplo)(2)\n");
+      printf("\nGostaria de escolher exatamente quais letras tirar(1)\nOu gostaria de remover elas segundo características em comum? (remover somente vogais, por exemplo)(2)\n");
       scanf(" %d",&n);
       if(n == 1)
           do{
@@ -609,6 +620,11 @@ void leitura(char* arquivo){
     printf("\nMenu:\n1 - Codificar palavras. \n2 - Decodificar códigos.\n3 - Retirar letras.\n4 - Mostrar a árvore.\n5 - Alterar a frequência de uma letra.\n6 - Ver dados sobre os nós disponíveis.\n7 - Adicionar letra\nPara sair, digite 0.\n");
     scanf(" %d",&op);
   }while(op != 0);
+
+  printf("Deseja salvar as alterações no arquivo?(1/0)\n");
+  scanf("%d",&n);
+  if(!n)
+      atualizaArquivo(ldf,arquivo);
   liberaArvore(raiz);
   liberaLista(ldf);
 }
