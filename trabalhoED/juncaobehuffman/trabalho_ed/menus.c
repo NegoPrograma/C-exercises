@@ -1,7 +1,8 @@
 #include "menus.h"
 
-NODE* menurem(TAB *a,NODE* raiz,int t){
+void menurem(TAB *a,NODE** raiz,int t){
     char lixo;
+    char taux[100];
     int op;
     do{
     printf("**************************************************\n");
@@ -14,12 +15,12 @@ NODE* menurem(TAB *a,NODE* raiz,int t){
     printf("*    6-sair\n");
     printf("*\n");
     do{
-        char taux[100];
+        
         printf("Digite a opção desejada: ");
         scanf(" %s",taux);
         op=atoi(taux);
   } while ((op<1)||(op>6));
-    raiz = opcaoRemovePorChaves(raiz,op,"temp.txt");
+  //  raiz = opcaoRemovePorChaves(raiz,op);
     if(op==1){
         while(1){
             printf("Digite o elemento q quer remover da arvore B:\n");
@@ -27,8 +28,8 @@ NODE* menurem(TAB *a,NODE* raiz,int t){
             scanf(" %c",&lixo);
             if(lixo=='-')break;
             a = retira(a,lixo,t);
-            raiz = opcaoRemove(raiz,lixo,"temp.txt");
-            imprimeArvore(raiz);
+        //    (*raiz) = opcaoRemove((*raiz),lixo);
+            imprimeArvore((*raiz));
             Imprime(a,0);
         }
     }else if(op==2){
@@ -46,7 +47,7 @@ NODE* menurem(TAB *a,NODE* raiz,int t){
     }
     
     }while(op!=6);
-    return raiz;
+    //return raiz;
 }
 
 NODE* menuins(TAB* a,NODE* raiz,int t){
@@ -63,7 +64,7 @@ NODE* menuins(TAB* a,NODE* raiz,int t){
     }while((f<0||f>100));
     TAB* elem=Busca(a,l);
     if(!elem){
-    raiz = opcaoAdicionaLetra(raiz,f,l,"temp.txt");
+    raiz = opcaoAdicionaLetra(raiz,f,l);
     }
     a=Insere(a,l,f,verfica_max(l),verfica_vog(l),t);
     imprimeArvore(raiz);
@@ -92,7 +93,7 @@ NODE* menufreqalt(TAB* a,NODE*raiz){
             break;
         }
         }
-        raiz = opcaoAlteraFrequencia(raiz,f,l,"temp.txt");
+        raiz = opcaoAlteraFrequencia(raiz,f,l);
     }else{
         printf("Este elemento n existe na arvore.\n\n");
     }

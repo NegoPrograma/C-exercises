@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "menus.h": "c",
+        "tarvb.h": "c",
+        "avh.h": "c",
+        "stdio.h": "c"
+    }
+}

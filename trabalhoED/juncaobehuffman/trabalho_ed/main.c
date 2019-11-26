@@ -60,13 +60,13 @@ int main(void){
   t=atoi(taux);
   } while ((t<2)||(t>5));
   a=Inicia_arquivo(a,t,fp);
-  Lista* ldf = NULL;
-  ldf = leituraArquivo("temp1.txt");
-  NODE* raiz = NULL;
-  raiz = avh(ldf,raiz);
   fclose(fp);
   Imprime(a,0);
   int op1;
+  Lista* ldf = NULL;
+  ldf = leituraArquivo("temp.txt");
+  NODE* raiz = NULL;
+  raiz = avh(ldf,raiz);
   do{
   int op;
   printf("**************************************************\n");
@@ -84,13 +84,13 @@ int main(void){
   char *taux;
   printf("Digite a opção desejada: ");
   scanf(" %s",taux);
-  op=atoi(taux);
+  op=atoi(taux); 
   op1=op;
   } while ((op<1)||(op>8)); 
   if (op==1){
- // raiz = menuins(a,raiz,t);
+  // raiz = menuins(a,raiz,t);
   }else if(op==2){
-   raiz = menurem(a,raiz,t);
+  menurem(a,&raiz,t);
   }else if(op==3){
    //raiz = menufreqalt(a,raiz);
   }else if(op==4){
@@ -116,9 +116,9 @@ int main(void){
     }else if(op3==2){
       opcaoCodifica(raiz);
     }else{
-      printf("codigo na arvore B:\n");
+      printf("codigo na árvore B:\n");
       menucod(a,t);
-      printf("codigo na arvore de Huffman:\n");
+      printf("codigo na árvore de Huffman:\n");
       opcaoCodifica(raiz);
     }
   }else if(op==6){

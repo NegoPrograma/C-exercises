@@ -8,7 +8,7 @@ void menuelem(TAB* a,NODE* raiz);
 NODE* menuins(TAB* a,NODE* raiz,int t);
 NODE* menufreqalt(TAB* a,NODE* raiz);
 void menucod(TAB* a,int t);
-NODE* menurem(TAB* a,NODE* raiz,int t);
+void menurem(TAB* a,NODE** raiz,int t);
 void remove_vog(TAB *a, int t);
 void remove_cons(TAB *a, int t);
 void remove_Mai(TAB *a, int t);

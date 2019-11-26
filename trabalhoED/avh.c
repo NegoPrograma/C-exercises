@@ -38,7 +38,6 @@ int eCaixaAlta(char* n){
 }
 
 char* printaVogal(NODE* n){
-  //if(m == 65 || m == 65+32 || m == 69 || m == 69+32 || m == 73 || m == 73+32 || m == 79 || m == 79+32 || m == 85 || m == 85+32);
   if(eVogal(n->l))
       return "vogal";
   return "consoante";
@@ -137,8 +136,6 @@ NODE* buscaNoArvore(char* c,NODE*raiz){
 }
 
 
-
-
 void imprime_aux(NODE *n, int andar){
   if(n){
       int j;
@@ -148,8 +145,6 @@ void imprime_aux(NODE *n, int andar){
           printf("%s %.1f\n",n->l,n->f);
         else
           printf("%c %.1f\n",n->l[0],n->f);
-      
-//printf("%.0f \n",n->f);  
       imprime_aux(n->dir,andar+1);
   }
 }
@@ -255,8 +250,6 @@ void decodificaAvh(char* codigo, NODE* atual,NODE* raiz){
     decodificaAvh(++codigo,atual->dir,raiz);
   else if((*codigo) == '0')
     decodificaAvh(++codigo,atual->esq,raiz);
-  /*else
-	  decodificaAvh(++codigo, atual, raiz);*/
 }
 
 void liberaLista(Lista* l){

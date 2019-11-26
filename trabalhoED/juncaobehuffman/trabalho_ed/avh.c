@@ -219,9 +219,9 @@ if(atual && !atual->prox){
 }
 
 
-Lista* leituraArquivo(char* nomeArq){
+Lista* leituraArquivo(){
   Lista* l = NULL;
-  FILE* fp = fopen(nomeArq,"r");
+  FILE* fp = fopen("temp.txt","r");
   int vogal,caixaAlta;
   float frequencia;
   char string[52];
@@ -343,8 +343,8 @@ Lista* filtro(Lista* l,int vouc){
 }
 
 
- void atualizaArquivo(Lista* l, char* arquivo){
-  FILE* fp = fopen(arquivo,"w");
+ void atualizaArquivo(Lista* l){
+  FILE* fp = fopen("temp.txt","w");
   Lista* aux = l;
   while(aux){
     fprintf(fp,"%s %f %d %d\n",aux->n->l,aux->n->f,eVogal(aux->n->l),eCaixaAlta(aux->n->l));
@@ -393,19 +393,19 @@ void opcaoDecodifica(NODE* raiz){
 }
 
 
-NODE* opcaoRemove(NODE* raiz,char p,char* arquivo){
+NODE* opcaoRemove(NODE* raiz,char p){
   char* palavra = &p;
   Lista*ldf= NULL,*lra=NULL;
   NODE* noAux = NULL;
       noAux = buscaNoArvore(palavra,raiz);
       if(noAux){
-        ldf = leituraArquivo(arquivo);
+        ldf = leituraArquivo();
         lra = insereOrdenado(lra,noAux);
         while(lra){
         ldf = retiraLista(ldf,lra);
         lra = lra->prox;
         } 
-        atualizaArquivo(ldf,arquivo);
+        atualizaArquivo(ldf);
         raiz = avh(ldf,raiz);
       } else 
           printf("Essa letra não está presente na árvore.\n");
@@ -415,10 +415,9 @@ NODE* opcaoRemove(NODE* raiz,char p,char* arquivo){
   return raiz;    
 }
 
-NODE* opcaoRemovePorChaves(NODE* raiz,int n, char* arquivo){
+NODE* opcaoRemovePorChaves(NODE* raiz,int n){
   Lista*ldf= NULL,*lra=NULL;
   NODE* noAux = NULL;
-  char* palavra = (char*) malloc(sizeof(char)*100);
         if(n == 2){
           lra = procuraVogais(raiz,lra);
         } else if(n == 3){
@@ -428,15 +427,15 @@ NODE* opcaoRemovePorChaves(NODE* raiz,int n, char* arquivo){
         } else if(n == 5){
           lra = procuraCaixaBaixa(raiz,lra);
         }
-      ldf = leituraArquivo("temp.txt");
+      ldf = leituraArquivo();
       while(lra){
       ldf = retiraLista(ldf,lra);
       lra = lra->prox;
       }
-      atualizaArquivo(ldf,arquivo);
+      atualizaArquivo(ldf);
       raiz = avh(ldf,raiz);
-      liberaLista(ldf);
-      liberaLista(lra);
+     // liberaLista(ldf);
+     // liberaLista(lra);
       return raiz;
 }
 
@@ -462,16 +461,15 @@ void opcaoMostraArvore(NODE*raiz){
   free(noAux);    
 }
 
-NODE* opcaoAlteraFrequencia(NODE* raiz,float f, char l,char* arquivo){
+NODE* opcaoAlteraFrequencia(NODE* raiz,float f, char l){
   float frequencia;
   NODE* noAux = NULL;
-  char* palavra = (char*) malloc(sizeof(char)*100);
   Lista* ldf = NULL, *lra = NULL;
-      ldf = leituraArquivo(arquivo);
+      ldf = leituraArquivo();
       if(buscaNoArvore(&l,raiz)){
         noAux = buscaNoLista(ldf,&l);
         noAux->f = frequencia;
-        atualizaArquivo(ldf,arquivo);
+        atualizaArquivo(ldf);
         raiz = avh(ldf,raiz);
         ldf = NULL;
         lra = NULL;
@@ -521,18 +519,19 @@ void opcaoMostraNosPorChave(NODE* raiz){
     ldf = NULL;
 }
 
-NODE* opcaoAdicionaLetra(NODE* raiz,float frequencia,char palavra,char* arquivo){
+NODE* opcaoAdicionaLetra(NODE* raiz,float frequencia,char palavra){
   NODE* noAux = NULL;
   Lista* ldf = NULL, *lra = NULL;
-  ldf = leituraArquivo(arquivo);
+  ldf = leituraArquivo();
   lra = insereOrdenado(lra,criaNo(&palavra,frequencia,eVogal(&palavra),eCaixaAlta(&palavra),NULL,NULL));
   while(lra){
         ldf = insereOrdenado(ldf,lra->n);
         lra = lra->prox;
     };
-    atualizaArquivo(ldf,arquivo);
+    atualizaArquivo(ldf);
     raiz = avh(ldf,raiz);
-    ldf = lra = NULL;
+    liberaLista(ldf);
+    liberaLista(lra);
     return raiz;            
 };
 
