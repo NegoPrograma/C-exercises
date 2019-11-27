@@ -122,7 +122,7 @@ for(; (*str) != '\0'; str++){
 
 NODE* buscaNoArvore(char* c,NODE*raiz){
   if(!raiz) return raiz;
-  if(contains(c,raiz->l) && !strcmp(c,raiz->l))
+  if(contains(c,raiz->l) && !raiz->dir && !raiz->esq)
         return raiz;
   else if(raiz->dir && contains(c,raiz->dir->l)){
      return buscaNoArvore(c,raiz->dir);
@@ -219,9 +219,9 @@ if(atual && !atual->prox){
 }
 
 
-Lista* leituraArquivo(){
+Lista* leituraArquivo(char* arquivo){
   Lista* l = NULL;
-  FILE* fp = fopen("temp.txt","r");
+  FILE* fp = fopen(arquivo,"r");
   int vogal,caixaAlta;
   float frequencia;
   char string[52];
@@ -393,23 +393,23 @@ void opcaoDecodifica(NODE* raiz){
 }
 
 
-NODE* opcaoRemove(NODE* raiz,char p){
-  char* palavra = &p;
+NODE* opcaoRemove(NODE* raiz,char* p){
   Lista*ldf= NULL,*lra=NULL;
   NODE* noAux = NULL;
-      noAux = buscaNoArvore(palavra,raiz);
+      noAux = buscaNoArvore(p,raiz);
       if(noAux){
-        ldf = leituraArquivo();
+        printf("Nó encontrado!\n");
+        ldf = leituraArquivo("temp.txt");
         lra = insereOrdenado(lra,noAux);
         while(lra){
         ldf = retiraLista(ldf,lra);
         lra = lra->prox;
         } 
         atualizaArquivo(ldf);
+        ldf = leituraArquivo("temp.txt");
         raiz = avh(ldf,raiz);
       } else 
           printf("Essa letra não está presente na árvore.\n");
-  free(palavra);
   liberaLista(ldf);
   liberaLista(lra);  
   return raiz;    
@@ -426,16 +426,18 @@ NODE* opcaoRemovePorChaves(NODE* raiz,int n){
           lra = procuraCaixaAlta(raiz,lra);
         } else if(n == 5){
           lra = procuraCaixaBaixa(raiz,lra);
-        }
-      ldf = leituraArquivo();
+        } else
+            return raiz;
+        
+      ldf = leituraArquivo("temp.txt");
       while(lra){
       ldf = retiraLista(ldf,lra);
       lra = lra->prox;
       }
       atualizaArquivo(ldf);
       raiz = avh(ldf,raiz);
-     // liberaLista(ldf);
-     // liberaLista(lra);
+      liberaLista(ldf);
+      liberaLista(lra);
       return raiz;
 }
 
@@ -465,7 +467,7 @@ NODE* opcaoAlteraFrequencia(NODE* raiz,float f, char l){
   float frequencia;
   NODE* noAux = NULL;
   Lista* ldf = NULL, *lra = NULL;
-      ldf = leituraArquivo();
+      ldf = leituraArquivo("temp.txt");
       if(buscaNoArvore(&l,raiz)){
         noAux = buscaNoLista(ldf,&l);
         noAux->f = frequencia;
@@ -491,39 +493,29 @@ void opcaoMostraNos(NODE* raiz,char* p){
     }
 }
 
-void opcaoMostraNosPorChave(NODE* raiz){
-  int n;
+void opcaoMostraNosPorChave(NODE* raiz,int op){
   Lista* ldf= NULL;
-  printf("\nVocê escolheu pesquisar de acordo com características em comum.\n As letras que você deseja pesquisar são:\n1 - Vogais\n2 - Consoantes\n3 - Ambas.\n");
-  scanf(" %d",&n);
-  if(n == 1){
+  if(op == 2){
     ldf = procuraVogais(raiz,ldf);
-    printf("\nVocê escolheu pesquisar as letras vogais.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-    scanf(" %d",&n);
-    ldf = filtro(ldf,n);
-    imprimeLista(ldf);
     } 
-  else if(n == 2){
+  else if(op == 3){
       ldf = procuraConsoantes(raiz,ldf);
-      printf("\nVocê escolheu pesquisar as letras consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-      scanf(" %d",&n);
-      ldf = filtro(ldf,n);
-      imprimeLista(ldf);
-    } else{
-      ldf = customQuery("12",ldf,raiz);
-      printf("\nVocê escolheu pesquisar tanto vogais quanto consoantes.\n As letras que você deseja pesquisar são:\n0 - Minúsculas\n1 - Maiúsculas\n2 - Ambas.\n");
-      scanf("%d",&n);
-      ldf = filtro(ldf,n);
-      imprimeLista(ldf);
+    } else if(op == 4){
+      ldf = procuraCaixaAlta(raiz,ldf);
+    } else if( op == 5){
+      ldf = procuraCaixaBaixa(raiz,ldf);
     }
+    imprimeLista(ldf);
     ldf = NULL;
 }
 
 NODE* opcaoAdicionaLetra(NODE* raiz,float frequencia,char palavra){
   NODE* noAux = NULL;
   Lista* ldf = NULL, *lra = NULL;
-  ldf = leituraArquivo();
-  lra = insereOrdenado(lra,criaNo(&palavra,frequencia,eVogal(&palavra),eCaixaAlta(&palavra),NULL,NULL));
+  ldf = leituraArquivo("temp.txt");
+  char letra[1];
+  letra[0] = palavra;
+  lra = insereOrdenado(lra,criaNo(letra,frequencia,eVogal(&palavra),eCaixaAlta(&palavra),NULL,NULL));
   while(lra){
         ldf = insereOrdenado(ldf,lra->n);
         lra = lra->prox;

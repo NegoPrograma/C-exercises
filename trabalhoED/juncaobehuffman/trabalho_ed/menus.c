@@ -1,6 +1,6 @@
 #include "menus.h"
 
-void menurem(TAB *a,NODE** raiz,int t){
+NODE* menurem(TAB *a,NODE* raiz,int t){
     char lixo;
     char taux[100];
     int op;
@@ -20,7 +20,7 @@ void menurem(TAB *a,NODE** raiz,int t){
         scanf(" %s",taux);
         op=atoi(taux);
   } while ((op<1)||(op>6));
-  //  raiz = opcaoRemovePorChaves(raiz,op);
+   raiz = opcaoRemovePorChaves(raiz,op);
     if(op==1){
         while(1){
             printf("Digite o elemento q quer remover da arvore B:\n");
@@ -28,8 +28,7 @@ void menurem(TAB *a,NODE** raiz,int t){
             scanf(" %c",&lixo);
             if(lixo=='-')break;
             a = retira(a,lixo,t);
-        //    (*raiz) = opcaoRemove((*raiz),lixo);
-            imprimeArvore((*raiz));
+            raiz = opcaoRemove(raiz,&lixo);
             Imprime(a,0);
         }
     }else if(op==2){
@@ -47,7 +46,8 @@ void menurem(TAB *a,NODE** raiz,int t){
     }
     
     }while(op!=6);
-    //return raiz;
+    imprimeArvore(raiz);
+    return raiz;
 }
 
 NODE* menuins(TAB* a,NODE* raiz,int t){
@@ -130,7 +130,6 @@ void menucod(TAB* a,int t){
 
 void menuelem(TAB* a,NODE* raiz){
     char l;
-    char* avhl = &l;
     do{
     printf("Digite a letra que deseja obter informação: ");
     scanf(" %c", &l);
@@ -138,17 +137,18 @@ void menuelem(TAB* a,NODE* raiz){
     TAB *elem;
     elem=Busca(a,l);
     printf("\n\n");
+    opcaoMostraNos(raiz,&l);
     if(elem){
         int i;
         for(i=0;i<elem->nchaves;i++){
-        if (elem->chave[i]->l==l){
-            
-            printf("Esta letra existe na arvore:\n");
-            printf("Frequencia: %.2f ela é uma %s, e é %s.\n\n",elem->chave[i]->f, strinvog(elem,i),strinmax(elem,i));
-            break;
+            if (elem->chave[i]->l==l){
+                
+                printf("Esta letra existe na arvore:\n");
+                printf("Frequencia: %.2f ela é uma %s, e é %s.\n\n",elem->chave[i]->f, strinvog(elem,i),strinmax(elem,i));
+                break;
+            }
         }
-        }
-        opcaoMostraNos(raiz,avhl);
+        
     }else{
         printf("Este elemento n existe na arvore.\n\n");
     }

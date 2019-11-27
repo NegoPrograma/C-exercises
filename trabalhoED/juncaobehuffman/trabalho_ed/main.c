@@ -9,6 +9,10 @@ int main(void){
   char nomeArquivo[120];
   char letra[1000];
   a=NULL;
+  Lista* ldf = NULL;
+  ldf = leituraArquivo("default.txt");
+  NODE* raiz = NULL;
+  raiz = avh(ldf,raiz);
   do
   {
     printf("Deseja abrir a configuração das arvores atraves de um arquivo editado?[s/n]\n");
@@ -54,19 +58,16 @@ int main(void){
   printf("\n\n");
   int t,lr;
   do{
-  char *taux;
+  char taux[1000];
   printf("Digite o numero T da arvore B:\n");
   scanf(" %s",taux);
   t=atoi(taux);
   } while ((t<2)||(t>5));
   a=Inicia_arquivo(a,t,fp);
+  
   fclose(fp);
   Imprime(a,0);
   int op1;
-  Lista* ldf = NULL;
-  ldf = leituraArquivo("temp.txt");
-  NODE* raiz = NULL;
-  raiz = avh(ldf,raiz);
   do{
   int op;
   printf("**************************************************\n");
@@ -84,22 +85,22 @@ int main(void){
   char *taux;
   printf("Digite a opção desejada: ");
   scanf(" %s",taux);
-  op=atoi(taux); 
+  op=atoi(taux);
   op1=op;
   } while ((op<1)||(op>8)); 
   if (op==1){
-  // raiz = menuins(a,raiz,t);
+ raiz =  menuins(a,raiz,t);
   }else if(op==2){
-  menurem(a,&raiz,t);
+   raiz = menurem(a,raiz,t);
   }else if(op==3){
-   //raiz = menufreqalt(a,raiz);
+  raiz =  menufreqalt(a,raiz);
   }else if(op==4){
     imprimeArvore(raiz);
     Imprime(a,0);
   }else if(op==5){
     int op3;
     do{
-    char *taux;
+    char taux[10];
     printf("**************************************************\n");
     printf("*\n");
     printf("*    1-Codificar na arvore B\n");
@@ -116,18 +117,15 @@ int main(void){
     }else if(op3==2){
       opcaoCodifica(raiz);
     }else{
-      printf("codigo na árvore B:\n");
+      printf("codigo na arvore B:\n");
       menucod(a,t);
-      printf("codigo na árvore de Huffman:\n");
+      printf("codigo na arvore de Huffman:\n");
       opcaoCodifica(raiz);
     }
   }else if(op==6){
-    int x,n,tamk,l,arvoreEscolhida;
+    int x,n,tamk,l;
     n=0;
     int i=0;
-    printf("Qual árvore irá decodificar sua mensagem?\n 1 - Árvore B\n 2 - Árvore de Huffman\n");
-    scanf("%d", &arvoreEscolhida);
-    if(arvoreEscolhida == 1){
     printf("Digite a menssagem\n");
     printf("para parar digite: -\n");
     setbuf(stdin, NULL);
@@ -155,11 +153,8 @@ int main(void){
     }
     }
     printf("\n");
-    } else if (arvoreEscolhida == 2){
     //huffman a baixo
-      opcaoDecodifica(raiz);
-    }
-    
+
   }else if (op==7){
     menuelem(a,raiz);
   }
@@ -173,6 +168,8 @@ int main(void){
   //   Escreve_arqui(a);
   //   return 0;
   // }
+  ldf = leituraArquivo("default.txt");
+  atualizaArquivo(ldf);
 
 return 0;
 }
