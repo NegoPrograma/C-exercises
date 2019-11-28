@@ -13,8 +13,7 @@ int main(void){
   ldf = leituraArquivo("default.txt");
   NODE* raiz = NULL;
   raiz = avh(ldf,raiz);
-  do
-  {
+  do{
     printf("Deseja abrir a configuração das arvores atraves de um arquivo editado?[s/n]\n");
     scanf(" %c",&desejo);
     printf("\n\n");
@@ -82,7 +81,7 @@ int main(void){
   printf("*    8-sair\n");
   printf("*\n");
   do{
-  char *taux;
+  char taux[10];
   printf("Digite a opção desejada: ");
   scanf(" %s",taux);
   op=atoi(taux);
@@ -95,41 +94,49 @@ int main(void){
   }else if(op==3){
   raiz =  menufreqalt(a,raiz);
   }else if(op==4){
-    imprimeArvore(raiz);
-    Imprime(a,0);
+    do{
+      printf("Qual árvore deseja ver?\n 1 - Árvore B\n 2 - Árvore de Huffman\nPara sair, digite 0\n");
+    scanf("%d",&op);
+    if(op == 2)
+      imprimeArvore(raiz);
+    else if (op == 1)
+      Imprime(a,0);
+    }while(op!=0);
   }else if(op==5){
     int op3;
+    char palavra[1000];
     do{
-    char taux[10];
+    char taux2[10];
     printf("**************************************************\n");
     printf("*\n");
     printf("*    1-Codificar na arvore B\n");
     printf("*    2-Codificar na arvore Huffman\n");
-    printf("*    3-codificar em Ambas\n");
+    printf("*    3-Codificar em Ambas\n");
     printf("*    4-sair\n");
     printf("Digite a opção desejada: ");
-    scanf(" %s",taux);
-    op3=atoi(taux);
+    scanf(" %s",taux2);
+    op3=atoi(taux2);
     if(op3==4)break;
     } while ((op3<1)||(op3>3));
-    if(op3==1){
-      menucod(a,t);
-    }else if(op3==2){
-      opcaoCodifica(raiz);
-    }else{
-      printf("codigo na arvore B:\n");
-      menucod(a,t);
-      printf("codigo na arvore de Huffman:\n");
-      opcaoCodifica(raiz);
+    if(op3 < 4){
+    printf("Digite a mensagem a ser codificada:\n ");
+    scanf(" %[^\n]",palavra);
+    menucod(a,palavra,raiz,op3);
     }
+
   }else if(op==6){
+    int op6;
+    do{
+      printf("Deseja decifrar a mensagem na Árvore B ou em Huffman?\n1 - Árvore B\n2 - Huffman\n");
+      scanf("%d",&op6);
+    }while(op6 != 1 && op6 != 2);
+    if(op6 == 1){
     int x,n,tamk,l;
     n=0;
     int i=0;
     printf("Digite a menssagem\n");
-    printf("para parar digite: -\n");
     setbuf(stdin, NULL);
-    scanf("%[^\n]s",letra);
+    scanf(" %[^\n]s",letra);
     setbuf(stdin, NULL);
     tamk = strlen(letra);
     TAB* q;
@@ -147,14 +154,15 @@ int main(void){
       }
       n++;
       printf("%c",q->chave[l]->l);
-
     }else{
       a=a->filho[0];
     }
     }
     printf("\n");
     //huffman a baixo
-
+    } else{
+      opcaoDecodifica(raiz);
+    }
   }else if (op==7){
     menuelem(a,raiz);
   }

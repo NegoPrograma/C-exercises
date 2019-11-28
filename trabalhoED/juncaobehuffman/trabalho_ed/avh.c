@@ -137,11 +137,11 @@ void imprime_aux(NODE *n, int andar){
   if(n){
       int j;
       imprime_aux(n->esq,andar+1);
-      for(j=0; j<=andar; j++) printf("         ");
+      for(j=0; j<=andar; j++) printf("     ");
         if(strlen(n->l) >1)
-          printf("%s %.1f\n",n->l,n->f);
+          printf("%s \n",n->l);
         else
-          printf("%c %.1f\n",n->l[0],n->f);
+          printf("%c \n",n->l[0]);
       imprime_aux(n->dir,andar+1);
   }
 }
@@ -353,18 +353,9 @@ Lista* filtro(Lista* l,int vouc){
   fclose(fp);
 }
 
-void opcaoCodifica(NODE* raiz){
-  int n = 0;
-  char* palavra = (char*) malloc(sizeof(char)*100);
-  do{
-        printf("Digite a palavra a ser codificada:\n");  
-        scanf(" %[^\n]",palavra);
-        printf("\ncódigo da palavra: ");
+void opcaoCodifica(NODE* raiz,char* palavra){
         codificaAvh(palavra,raiz);
-        printf("\ndeseja continuar codificando? Se sim, digite 1, caso contrário, digite 0.\n");
-        scanf(" %d",&n);
-    }while(n != 0);
-    free(palavra);
+        printf("\n");
 }
 
 char* filtraPalavra(char* palavra){
@@ -379,16 +370,11 @@ char* filtraPalavra(char* palavra){
 }
 
 void opcaoDecodifica(NODE* raiz){
-  int n = 0;
   char* palavra = (char*) malloc(sizeof(char)*100);
-  do{
         printf("\nDigite o código a ser decodificado:\n");  
         scanf(" %[^\n]",palavra);
         printf("\n A palavra correspondente é:  ");
         decodificaAvh(palavra,raiz,raiz);
-        printf("\nDeseja continuar decodificando? Se sim, digite 1, caso contrário, digite 0.\n");
-        scanf("%d",&n);
-      }while(n != 0);
   free(palavra);
 }
 
@@ -464,13 +450,12 @@ void opcaoMostraArvore(NODE*raiz){
 }
 
 NODE* opcaoAlteraFrequencia(NODE* raiz,float f, char l){
-  float frequencia;
   NODE* noAux = NULL;
   Lista* ldf = NULL, *lra = NULL;
       ldf = leituraArquivo("temp.txt");
       if(buscaNoArvore(&l,raiz)){
         noAux = buscaNoLista(ldf,&l);
-        noAux->f = frequencia;
+        noAux->f = f;
         atualizaArquivo(ldf);
         raiz = avh(ldf,raiz);
         ldf = NULL;
@@ -482,12 +467,13 @@ NODE* opcaoAlteraFrequencia(NODE* raiz,float f, char l){
 }
 
 void opcaoMostraNos(NODE* raiz,char* p){
-  NODE* noAux = NULL;
+    NODE* noAux = NULL;
     noAux = buscaNoArvore(p,raiz);
     if(noAux){
-    printf("\n-----------------------------------------------------\n");
-    printf("|   conteúdo: %s frequência: %.2f %s %s |",noAux->l,noAux->f,printaVogal(noAux),printaCaixaAlta(noAux));
-    printf("\n-----------------------------------------------------\n");
+      printf("Árvore de Huffman: \n");
+      printf("\n-----------------------------------------------------\n");
+      printf("|   conteúdo: %s frequência: %.2f %s %s |",noAux->l,noAux->f,printaVogal(noAux),printaCaixaAlta(noAux));
+      printf("\n-----------------------------------------------------\n");
     } else {
       printf("Não existe nenhum nó com esse conteúdo.\n");
     }

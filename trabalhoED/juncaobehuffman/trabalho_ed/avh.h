@@ -40,7 +40,7 @@ Lista* procuraCaixaBaixa(NODE* n,Lista* l);
 Lista* filtro(Lista* l,int vouc);
 void atualizaArquivo(Lista* l);
 Lista* customQuery(char* palavra, Lista* list,NODE* raiz);
-void opcaoCodifica(NODE* raiz);
+void opcaoCodifica(NODE* raiz,char* palavra);
 void opcaoDecodifica(NODE* raiz);
 NODE* opcaoRemove(NODE* raiz,char* p);
 NODE* opcaoRemovePorChaves(NODE* raiz,int n);

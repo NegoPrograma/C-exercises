@@ -101,30 +101,37 @@ NODE* menufreqalt(TAB* a,NODE*raiz){
 
 }
 
-void menucod(TAB* a,int t){
-    char letra[1000];
+void menucod(TAB* a,char* palavra,NODE* raiz,int op){
     int p,tam;
-    while(1){
-      printf("Digite a menssagem\n");
-      printf("para parar digite: -\n");
-      setbuf(stdin, NULL);
-      scanf("%[^\n]s",letra);
-      setbuf(stdin, NULL);
-      p=0;
-      if (letra[0]=='-')
-      {
-      break;
-      }
-      tam=strlen(letra);
-      while(p<tam){
-        if (Busca(a,letra[p])){
-          rastreia_cod(a,letra[p]);
-        }else{
-          printf("?");
-        }
-        p++;
-      }
-      printf("\n");
+    if(op == 1){
+            p=0;
+            tam=strlen(palavra);
+            while(p<tam){
+                if (Busca(a,palavra[p])){
+                rastreia_cod(a,palavra[p]);
+                }else{
+                printf("?");
+                }
+                p++;
+            }
+            printf("\n");
+    } else if(op == 2){
+        opcaoCodifica(raiz,palavra);
+    } else if( op == 3){
+        printf("Código na árvore B:\n");
+        p=0;
+            tam=strlen(palavra);
+            while(p<tam){
+                if (Busca(a,palavra[p])){
+                rastreia_cod(a,palavra[p]);
+                }else{
+                printf("?");
+                }
+                p++;
+            }
+            printf("\n");
+        printf("Código na árvore de Huffman:\n");                    
+        opcaoCodifica(raiz,palavra);
     }
 }
 
@@ -134,7 +141,7 @@ void menuelem(TAB* a,NODE* raiz){
     printf("Digite a letra que deseja obter informação: ");
     scanf(" %c", &l);
     }while((l<65||l>90)&&(l<97 ||l>122));
-    TAB *elem;
+    TAB *elem = NULL;
     elem=Busca(a,l);
     printf("\n\n");
     opcaoMostraNos(raiz,&l);
@@ -150,7 +157,7 @@ void menuelem(TAB* a,NODE* raiz){
         }
         
     }else{
-        printf("Este elemento n existe na arvore.\n\n");
+        printf("Este elemento não existe na arvore.\n\n");
     }
 }
 
